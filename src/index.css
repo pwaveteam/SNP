@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.ql-editor {
+  min-height: 100px !important;
+  height: 260px !important;
+}
+
+.hide-select-col thead th:first-child,
+.hide-select-col tbody td:first-child {
+  display: none;
+}
+
+.no-row-hover tbody tr {
+  cursor: default;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --border: #DFDFDF;
+    --radius: 0.5rem;
+
+    --primary: #03386D;
+    --secondary: #3363AB;
+    --tertiary: #305166;
+
+    --neutral: #869CAE;
+    --neutral-light: #CBCFD6;
+    --neutral-bg: #F3F5F7;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
