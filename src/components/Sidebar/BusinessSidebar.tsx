@@ -55,15 +55,15 @@ return()=>clearInterval(i)
 
 const STYLES={
 layout:{sidebarBg:"bg-[#041620]",border:"border-slate-700"},
-text:{base:"text-slate-300",hover:"hover:text-white",supportNormal:"text-[#EDEDED]"},
+text:{base:"text-slate-300",hover:"hover:text-[var(--secondary)]",active:"text-[var(--secondary)]",supportNormal:"text-[#EDEDED]"},
 category:{business:"text-[#DEEBF3]",iconBusiness:"text-[#B1B1B1]"},
-item:{text:"text-[#EDEDED]",icon:"text-[#B1B1B1]",hoverBg:"hover:bg-[#2C67BF]",activeBg:"bg-[#2C67BF]"},
+item:{text:"text-[#EDEDED]",icon:"text-[#B1B1B1]"},
 toggle:{bg:"bg-[#333333]",hover:"hover:bg-neutral-900",active:"active:bg-neutral-800",icon:"text-white"}
 }
 
-const NavItem=(item:typeof businessSubMenu[0])=>(
+const NavItem=(item:typeof businessSubMenu[0],isActive:boolean)=>(
 <>
-{item.Icon&&<item.Icon className={`w-[18px] h-[18px] min-w-[18px] ${STYLES.category.iconBusiness} group-hover:text-white`}/>}
+{item.Icon&&<item.Icon className={`w-[18px] h-[18px] min-w-[18px] transition-colors ${isActive?"text-[var(--secondary)]":`${STYLES.category.iconBusiness} group-hover:text-[var(--secondary)]`}`}/>}
 <span className="flex-1 text-[15px] font-medium overflow-hidden whitespace-nowrap text-ellipsis min-w-0">{item.label}</span>
 </>
 )
@@ -74,7 +74,7 @@ return(
 <>
 {isOpen&&<div onClick={()=>setIsOpen(false)} className="fixed inset-0 bg-black/40 z-[100] md:hidden"/>}
 
-<aside className={`fixed top-[60px] left-0 ${STYLES.layout.sidebarBg} text-white border-r ${STYLES.layout.border} z-[101] transition-all duration-300 ${isOpen?"translate-x-0":"-translate-x-full"} md:translate-x-0 w-full overflow-visible`} style={{height:"calc(100vh - 60px)"}}>
+<aside className={`fixed top-[60px] left-0 ${STYLES.layout.sidebarBg} text-white border-r ${STYLES.layout.border} z-[101] transition-all duration-300 ${isOpen?"translate-x-0":"-translate-x-full"} md:translate-x-0 w-full overflow-visible`} style={{height:"calc(100vh - 60px)","--secondary":"#3363AB"} as React.CSSProperties}>
 <style>{`@media (min-width: 768px){aside{width:${isDesktopOpen?DESKTOP_W_OPEN:DESKTOP_W_CLOSED}px !important;}}`}</style>
 
 <div className="hidden md:block absolute top-0 -right-4 z-10 group">
@@ -117,8 +117,8 @@ return(
 <ul className="list-none p-0 m-0">
 {businessSubMenu.map(item=>(
 <li key={item.path} className="mb-0.5">
-<NavLink to={item.path} onClick={handleNavClick} className={({isActive})=>`group flex items-center gap-3 py-2 px-3 rounded-lg transition-colors overflow-hidden ${isActive?`${STYLES.item.activeBg} text-white`:`${STYLES.item.text} ${STYLES.text.hover} ${STYLES.item.hoverBg}`}`}>
-{NavItem(item)}
+<NavLink to={item.path} onClick={handleNavClick} className={({isActive})=>`group flex items-center gap-3 py-2 px-3 rounded-lg transition-colors overflow-hidden ${isActive?STYLES.text.active:`${STYLES.item.text} ${STYLES.text.hover}`}`}>
+{({isActive})=>NavItem(item,isActive)}
 </NavLink>
 </li>
 ))}

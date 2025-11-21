@@ -77,15 +77,15 @@ return()=>clearInterval(i)
 
 const STYLES={
 layout:{sidebarBg:"bg-[#041620]",border:"border-slate-700"},
-text:{base:"text-slate-300",hover:"hover:text-white",userMsg:"text-[#D9D9D9]",companyName:"text-[#F9F9FB]",supportNormal:"text-[#EDEDED]"},
+text:{base:"text-slate-300",hover:"hover:text-[var(--secondary)]",active:"text-[var(--secondary)]",userMsg:"text-[#D9D9D9]",companyName:"text-[#F9F9FB]",supportNormal:"text-[#EDEDED]"},
 category:{safety:"text-[#DEEBF3]",info:"text-[#DEEBF3]",iconSafety:"text-[#B1B1B1]",iconInfo:"text-[#B1B1B1]"},
-item:{text:"text-[#EDEDED]",icon:"text-[#B1B1B1]",hoverBg:"hover:bg-[#2C67BF]",activeBg:"bg-[#2C67BF]"},
+item:{text:"text-[#EDEDED]",icon:"text-[#B1B1B1]"},
 toggle:{bg:"bg-[#333333]",hover:"hover:bg-neutral-900",active:"active:bg-neutral-800",icon:"text-white"}
 }
 
-const NavItem=(item:MenuItem,iconColor:string)=>(
+const NavItem=(item:MenuItem,iconColor:string,isActive:boolean)=>(
 <>
-{item.Icon&&<item.Icon className={`w-[18px] h-[18px] min-w-[18px] ${iconColor} group-hover:text-white`}/>}
+{item.Icon&&<item.Icon className={`w-[18px] h-[18px] min-w-[18px] transition-colors ${isActive?"text-[var(--secondary)]":`${iconColor} group-hover:text-[var(--secondary)]`}`}/>}
 <span className="flex-1 text-[15px] font-medium overflow-hidden whitespace-nowrap text-ellipsis min-w-0">{item.label}</span>
 </>
 )
@@ -96,7 +96,7 @@ return(
 <>
 {isOpen&&<div onClick={onClose} className="fixed inset-0 bg-black/40 z-[100] md:hidden"/>}
 
-<aside className={`fixed top-[60px] left-0 ${STYLES.layout.sidebarBg} text-white border-r ${STYLES.layout.border} z-[101] transition-all duration-300 ${isOpen?"translate-x-0":"-translate-x-full"} md:translate-x-0 w-full overflow-visible`} style={{height:"calc(100vh - 60px)"}}>
+<aside className={`fixed top-[60px] left-0 ${STYLES.layout.sidebarBg} text-white border-r ${STYLES.layout.border} z-[101] transition-all duration-300 ${isOpen?"translate-x-0":"-translate-x-full"} md:translate-x-0 w-full overflow-visible`} style={{height:"calc(100vh - 60px)","--secondary":"#3363AB"} as React.CSSProperties}>
 <style>{`@media (min-width: 768px){aside{width:${isDesktopOpen?DESKTOP_W_OPEN:DESKTOP_W_CLOSED}px !important;}}`}</style>
 
 <div className="hidden md:block absolute top-0 -right-4 z-10 group">
@@ -138,8 +138,8 @@ return(
 <ul className="list-none p-0 m-0">
 {safetySubMenu.map(item=>(
 <li key={item.path} className="mb-0.5">
-<NavLink to={item.path} onClick={handleNavClick} className={({isActive})=>`group flex items-center gap-3 py-2 px-3 rounded-lg transition-colors overflow-hidden ${isActive?`${STYLES.item.activeBg} text-white`:`${STYLES.item.text} ${STYLES.text.hover} ${STYLES.item.hoverBg}`}`}>
-{NavItem(item,STYLES.category.iconSafety)}
+<NavLink to={item.path} onClick={handleNavClick} className={({isActive})=>`group flex items-center gap-3 py-2 px-3 rounded-lg transition-colors overflow-hidden ${isActive?STYLES.text.active:`${STYLES.item.text} ${STYLES.text.hover}`}`}>
+{({isActive})=>NavItem(item,STYLES.category.iconSafety,isActive)}
 </NavLink>
 </li>
 ))}
@@ -147,9 +147,13 @@ return(
 </section>
 
 <div className={`mb-6 ${isDesktopOpen?"border-t border-b":""} ${STYLES.layout.border}`}>
-<NavLink to="/business-management" onClick={handleNavClick} className={({isActive})=>`flex items-center gap-3 font-medium text-base h-[50px] px-3 rounded-lg transition-colors overflow-hidden ${isActive?`${STYLES.item.activeBg} text-white`:`${STYLES.item.text} ${STYLES.text.hover} ${STYLES.item.hoverBg}`}`} end>
-<Cog6ToothIcon className={`w-5 h-5 min-w-[20px] ${STYLES.item.icon}`}/>
+<NavLink to="/business-management" onClick={handleNavClick} className={({isActive})=>`group flex items-center gap-3 font-medium text-base h-[50px] px-3 rounded-lg transition-colors overflow-hidden ${isActive?STYLES.text.active:`${STYLES.item.text} ${STYLES.text.hover}`}`} end>
+{({isActive})=>(
+<>
+<Cog6ToothIcon className={`w-5 h-5 min-w-[20px] transition-colors ${isActive?"text-[var(--secondary)]":`${STYLES.item.icon} group-hover:text-[var(--secondary)]`}`}/>
 <span className="overflow-hidden whitespace-nowrap text-ellipsis min-w-0">사업장관리</span>
+</>
+)}
 </NavLink>
 </div>
 
@@ -157,8 +161,8 @@ return(
 <ul className="list-none p-0 m-0">
 {infoSubMenu.map(item=>(
 <li key={item.path} className="mb-0.5">
-<NavLink to={item.path} onClick={handleNavClick} className={({isActive})=>`group flex items-center gap-3 py-2 px-3 rounded-lg transition-colors overflow-hidden ${isActive?`${STYLES.item.activeBg} text-white`:`${STYLES.item.text} ${STYLES.text.hover} ${STYLES.item.hoverBg}`}`}>
-{NavItem(item,STYLES.category.iconInfo)}
+<NavLink to={item.path} onClick={handleNavClick} className={({isActive})=>`group flex items-center gap-3 py-2 px-3 rounded-lg transition-colors overflow-hidden ${isActive?STYLES.text.active:`${STYLES.item.text} ${STYLES.text.hover}`}`}>
+{({isActive})=>NavItem(item,STYLES.category.iconInfo,isActive)}
 </NavLink>
 </li>
 ))}
@@ -170,14 +174,18 @@ return(
 {supportMenu.map(item=>(
 <li key={item.path} className="mb-0.5">
 {item.label==="사용가이드"?(
-<a href={item.path} target="_blank" rel="noopener noreferrer" className={`group flex items-center gap-3 py-2 px-3 rounded-lg text-[15px] font-medium ${STYLES.text.supportNormal} ${STYLES.text.hover} ${STYLES.item.hoverBg} transition-colors overflow-hidden`}>
-{item.Icon&&<item.Icon className={`w-[18px] h-[18px] min-w-[18px] ${STYLES.category.iconInfo} group-hover:text-white`}/>}
+<a href={item.path} target="_blank" rel="noopener noreferrer" className={`group flex items-center gap-3 py-2 px-3 rounded-lg text-[15px] font-medium ${STYLES.text.supportNormal} ${STYLES.text.hover} transition-colors overflow-hidden`}>
+{item.Icon&&<item.Icon className={`w-[18px] h-[18px] min-w-[18px] ${STYLES.category.iconInfo} group-hover:text-[var(--secondary)] transition-colors`}/>}
 <span className="flex-1 overflow-hidden whitespace-nowrap text-ellipsis min-w-0">{item.label}</span>
 </a>
 ):(
-<NavLink to={item.path} onClick={handleNavClick} className={({isActive})=>`group flex items-center gap-3 py-2 px-3 rounded-lg text-[15px] font-medium transition-colors overflow-hidden ${isActive?`${STYLES.item.activeBg} text-white`:`${STYLES.text.supportNormal} ${STYLES.text.hover} ${STYLES.item.hoverBg}`}`}>
-{item.Icon&&<item.Icon className={`w-[18px] h-[18px] min-w-[18px] ${STYLES.category.iconInfo} group-hover:text-white`}/>}
+<NavLink to={item.path} onClick={handleNavClick} className={({isActive})=>`group flex items-center gap-3 py-2 px-3 rounded-lg text-[15px] font-medium transition-colors overflow-hidden ${isActive?STYLES.text.active:`${STYLES.text.supportNormal} ${STYLES.text.hover}`}`}>
+{({isActive})=>(
+<>
+{item.Icon&&<item.Icon className={`w-[18px] h-[18px] min-w-[18px] transition-colors ${isActive?"text-[var(--secondary)]":`${STYLES.category.iconInfo} group-hover:text-[var(--secondary)]`}`}/>}
 <span className="flex-1 overflow-hidden whitespace-nowrap text-ellipsis min-w-0">{item.label}</span>
+</>
+)}
 </NavLink>
 )}
 </li>
